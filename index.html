@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Firebase Authentication</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+    <div id="app">
+        <nav class="navbar navbar-dark bg-dark">
+            <a href="index.html" class="navbar-brand">Firebase Authentication</a>
+        </nav>
+        <main>
+            <div class="container-fluid">
+                <h1>Notas</h1>
+
+
+                <div class="notes-list">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>Nota</th>
+                                <th>Acción</th>
+                            </tr>
+                            <tr v-for="note of notes" :key="note.id">
+                                <td>{{ note.data.text }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-danger m-0 py-0" @click="deleteNote(note.id)">Eliminar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button type="button" class="btn btn-info" @click="getNotes">Refrescar</button>
+
+                <form class="form mt-2" @submit.prevent="onSubmit">
+                    <input type="text" class="form-control" v-model="newNote" placeholder="Nueva nota" @keyup.enter="addNote">
+                    <button type="button" class="btn btn-primary" @click="addNote">Agregar</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/6.4.0/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+         https://firebase.google.com/docs/web/setup#config-web-app -->
+    <script src="https://www.gstatic.com/firebasejs/6.4.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.4.0/firebase-firestore.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyCXp9zRmEbeOZ11K4lymBWWbrE9zK1NS6Y",
+            authDomain: "vuefirebaseauthentication.firebaseapp.com",
+            databaseURL: "https://vuefirebaseauthentication.firebaseio.com",
+            projectId: "vuefirebaseauthentication",
+            storageBucket: "vuefirebaseauthentication.appspot.com",
+            messagingSenderId: "808079974559",
+            appId: "1:808079974559:web:bc2a31f9c58a7f28"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        console.log('App', firebase.app().name);
+
+        var db = firebase.firestore();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    newNote: '',
+                    notes: [],
+                };
+            },
+            mounted() {
+                this.observeNotes();
+            },
+            methods: {
+                onSubmit: function () {
+
+                },
+                addNote: function () {
+                    const self = this;
+                    db.collection('notes').add({
+                        text: this.newNote,
+                        createdAt: new Date()
+                    })
+                        .then(function (docRef) {
+                            self.newNote = '';
+                            console.log('nota agregada:', docRef.id);
+                        })
+                        .catch(function (error) {
+                            console.log('error agregando nota', error);
+                        });
+                },
+                getNotes: function () {
+                    db.collection('notes').orderBy("createdAt").get()
+                        .then((querySnapshot) => {
+                            const result = [];
+                            querySnapshot.forEach((doc) => {
+                                const item = {
+                                    id: doc.id,
+                                    data: doc.data()
+                                };
+                                result.push(item);
+                            });
+                            this.notes = result;
+                        });
+                },
+                observeNotes: function () {
+                    db.collection('notes').orderBy("createdAt")
+                        .onSnapshot((querySnapshot) => {
+                            const result = [];
+                            querySnapshot.forEach((doc) => {
+                                const item = {
+                                    id: doc.id,
+                                    data: doc.data()
+                                };
+                                result.push(item);
+                            });
+                            this.notes = result;
+                        });
+                },
+                deleteNote: function (id) {
+                    const self = this;
+                    db.collection('notes').doc(id).delete()
+                        .then(function () {
+                            self.getNotes();
+                            console.log('nota eliminada:', id);
+                        })
+                        .catch(function (error) {
+                            console.log('error eliminado nota', error);
+                        })
+                },
+            }
+        });
+    </script>
+</body>
+
+</html>
