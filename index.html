@@ -39,7 +39,7 @@
 
                 <form class="form mt-2" @submit.prevent="onSubmit">
                     <div class="input-group">
-                        <input type="text" class="form-control" v-model="newNote" placeholder="Nueva nota" @keyup.enter="addNote">
+                        <input ref="newNoteInput" type="text" class="form-control" v-model="newNote" placeholder="Nueva nota" @keyup.enter="addNote">
                         <div class="input-group-append">
                             <button type="button" class="btn btn-primary" @click="addNote">Agregar</button>
                         </div>
@@ -76,7 +76,15 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-toasted"></script>
+
     <script>
+        Vue.use(Toasted, {
+            position: 'top-center',
+            duration: 2000,
+            keepOnHover: true,
+        });
+
         const app = new Vue({
             el: '#app',
             data() {
@@ -99,11 +107,14 @@
                         createdAt: new Date()
                     })
                         .then(function (docRef) {
-                            self.newNote = '';
                             console.log('nota agregada:', docRef.id);
+                            self.newNote = '';
+                            self.$refs['newNoteInput'].focus();
                         })
                         .catch(function (error) {
                             console.log('error agregando nota', error);
+                            self.$refs['newNoteInput'].focus();
+                            Vue.toasted.error("Error agregando nota: " + error);
                         });
                 },
                 getNotes: function () {
@@ -143,6 +154,7 @@
                         })
                         .catch(function (error) {
                             console.log('error eliminado nota', error);
+                            Vue.toasted.error("Error eliminado nota: " + error);
                         })
                 },
             }
