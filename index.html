@@ -38,8 +38,12 @@
                 <button type="button" class="btn btn-info" @click="getNotes">Refrescar</button>
 
                 <form class="form mt-2" @submit.prevent="onSubmit">
-                    <input type="text" class="form-control" v-model="newNote" placeholder="Nueva nota" @keyup.enter="addNote">
-                    <button type="button" class="btn btn-primary" @click="addNote">Agregar</button>
+                    <div class="input-group">
+                        <input type="text" class="form-control" v-model="newNote" placeholder="Nueva nota" @keyup.enter="addNote">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary" @click="addNote">Agregar</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </main>
@@ -86,7 +90,7 @@
             },
             methods: {
                 onSubmit: function () {
-
+                    // nothing to do
                 },
                 addNote: function () {
                     const self = this;
