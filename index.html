@@ -16,12 +16,17 @@
             <div class="my-2 my-md-0 text-white">
                 <span v-if="user"> {{ user.displayName }} </span>
                 <span v-if="!user || user.isAnonymous">
-                    <button class="btn btn-sm btn-outline-secondary" @click="login">Login</button>
+                    <button class="btn btn-sm btn-outline-secondary" @click="showLogin = true">Login</button>
                 </span>
             </div>
         </nav>
         <main>
             <div class="container-fluid">
+                <section class="login" v-if="showLogin">
+                    <h1>Login</h1>
+
+                    <button class="btn btn-sm btn-outline-secondary" @click="showLogin = false">Cancelar</button>
+                </section>
 
                 <section class="notes-list">
                     <h1>Notas</h1>
@@ -101,6 +106,7 @@
                 newNote: '',
                 notes: [],
                 user: null,
+                showLogin: false,
             },
             created() {
             },
@@ -190,9 +196,6 @@
                             Vue.toasted.error("Error eliminado nota: " + error);
                         })
                 },
-                login: function () {
-                    console.log('login');
-                }
             }
         });
     </script>
