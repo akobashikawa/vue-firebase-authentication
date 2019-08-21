@@ -22,35 +22,39 @@
         </nav>
         <main>
             <div class="container-fluid">
-                <h1>Notas</h1>
 
+                <section class="notes-list">
+                    <h1>Notas</h1>
 
-                <div class="notes-list">
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <th>Nota</th>
-                                <th>Acción</th>
-                            </tr>
-                            <tr v-for="note of notes" :key="note.id">
-                                <td>{{ note.data.text }}</td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-danger m-0 py-0" @click="deleteNote(note.id)">Eliminar</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <button type="button" class="btn btn-sm btn-info" @click="getNotes">Refrescar</button>
-
-                <form class="form mt-2" @submit.prevent="onSubmit" v-if="user && !user.isAnonymous">
-                    <div class="input-group">
-                        <input ref="newNoteInput" type="text" class="form-control" v-model="newNote" placeholder="Nueva nota" @keyup.enter="addNote">
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-primary" @click="addNote">Agregar</button>
-                        </div>
+                    <div class="notes-list" v-if="notes.length">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <th>Nota</th>
+                                    <th>Acción</th>
+                                </tr>
+                                <tr v-for="note of notes" :key="note.id">
+                                    <td>{{ note.data.text }}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-danger m-0 py-0" @click="deleteNote(note.id)">Eliminar</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                </form>
+                    <button type="button" class="btn btn-sm btn-outline-info" @click="getNotes">Refrescar</button>
+                </section>
+
+                <section class="notes-add" v-if="user && !user.isAnonymous">
+                    <form class="form mt-2" @submit.prevent="onSubmit">
+                        <div class="input-group">
+                            <input ref="newNoteInput" type="text" class="form-control" v-model="newNote" placeholder="Nueva nota" @keyup.enter="addNote">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary" @click="addNote">Agregar</button>
+                            </div>
+                        </div>
+                    </form>
+                </section>
             </div>
         </main>
     </div>
