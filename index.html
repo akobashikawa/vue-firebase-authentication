@@ -7,6 +7,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Firebase Authentication</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+        .login-photo {
+            width: 30px;
+            border-radius: 100%;
+        }
+    </style>
 </head>
 
 <body>
@@ -14,22 +21,32 @@
         <nav class="navbar navbar-dark bg-dark">
             <a href="index.html" class="navbar-brand">Firebase Authentication</a>
             <div class="my-2 my-md-0 text-white">
-                <span v-if="user"> {{ user.displayName }} </span>
+                <span v-if="user">
+                    <img :src="user.photoURL" alt="Foto usuario" class="login-photo">
+                    {{ user.displayName }}
+                    <button class="btn btn-sm btn-outline-secondary" @click="logout = true" v-if="!user.isAnonymous">Logout</button>
+                </span>
                 <span v-if="!user || user.isAnonymous">
-                    <button class="btn btn-sm btn-outline-secondary" @click="showLogin = true">Login</button>
+                    <button class="btn btn-sm btn-outline-primary" @click="showLogin = true">Login</button>
                 </span>
             </div>
         </nav>
         <main>
             <div class="container-fluid">
-                <section class="login" v-if="showLogin">
-                    <h1>Login</h1>
+                <section class="login mb-3" v-if="showLogin">
+                    <h2>Login</h2>
+
+                    <ul class="list-unstyled">
+                        <li>
+                            <button class="btn btn-sm btn-outline-primary" @click="googleLogin">Google</button>
+                        </li>
+                    </ul>
 
                     <button class="btn btn-sm btn-outline-secondary" @click="showLogin = false">Cancelar</button>
                 </section>
 
                 <section class="notes-list">
-                    <h1>Notas</h1>
+                    <h2>Notas</h2>
 
                     <div class="notes-list" v-if="notes.length">
                         <table class="table">
@@ -107,6 +124,7 @@
                 notes: [],
                 user: null,
                 showLogin: false,
+                defaultLoginPhotoURL: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAQAAABLCVATAAABp0lEQVR4AdTVJZRVURiA0Y27uzS8LwruFvGO9Yh2puBOw3vDteEk3KHg7j+Tzpo56zxhTWJ/7em995j/SGcLHHPVE9988dQ1RyzU0T/pZ58votAX+/RTl7bW+iSq9MlabdXQyyVRR5f0UsUID0WdPTRCmb6eiTynbG7sVOGdZwYo6OSKyHptOoDpXousm7qQaxDylmhqqZC3UWaIr4X/y90UWV8N1cw+IW8fan9qP5L2xem3V25vcYq2l8wThW7J3RKF5kl2i2KLNbVYFNsjOSsKFYe/0FnJHVGxE7Y2dkpU7I7ks2hBnyQfRQv6KLkrWtBdyfni/DholfG6gC4mWOVgcb6drzz8Ly3XWUkPO/0uDH9xQj7URzUTvKk0Ids3G7c5aplXWCKFVTRbLbMrL+0Bvqa33hujmtHeS9uI/tU2tmfGqmSsZyLVQK6TGyL1y3pdCmO2wS+RuqKTgoGeCinv7TDZcF0NNNsaZ/zKNv++yox0v+XHEX8HqSBPEGXMKdwVJCJNVaNlBMzMUw1URRQQx9eIAMqSBDiRmjXfoc2aYGCzZsgAAJ59akNQuc64AAAAAElFTkSuQmCC',
             },
             created() {
             },
@@ -123,7 +141,9 @@
                         const _user = {
                             uid: user.uid,
                             isAnonymous: user.isAnonymous,
-                            displayName: user.isAnonymous ? 'Anónimo' : user.displayName
+                            displayName: user.isAnonymous ? 'Anónimo' : user.displayName,
+                            email: user.email,
+                            photoURL: user.photoURL || self.defaultLoginPhotoURL,
                         };
                         self.user = _user;
                     } else {
@@ -195,6 +215,36 @@
                             console.log('error eliminado nota', error);
                             Vue.toasted.error("Error eliminado nota: " + error);
                         })
+                },
+                googleLogin: function () {
+                    var provider = new firebase.auth.GoogleAuthProvider();
+                    provider.addScope("https://www.googleapis.com/auth/userinfo.email");
+
+                    firebase
+                        .auth()
+                        .signInWithPopup(provider)
+                        .then(function (result) {
+                            // console.log({ result });
+                            // This gives you a Google Access Token. You can use it to access the Google API.
+                            const token = result.credential.accessToken;
+                            // The signed-in user info.
+                            const user = result.user;
+
+                            console.log(user);
+                        })
+                        .catch(function (error) {
+                            console.log({ error });
+                            // Handle Errors here.
+                            const errorCode = error.code;
+                            const errorMessage = error.message;
+                            // The email of the user's account used.
+                            const email = error.email;
+                            // The firebase.auth.AuthCredential type that was used.
+                            const credential = error.credential;
+                            // ...
+                            Vue.toasted.error(`${errorCode}: ${errorMessage}`);
+                            // alert(`ERROR: ${errorCode}: ${errorMessage}`);
+                        });
                 },
             }
         });
