@@ -22,95 +22,14 @@
 
 <body>
     <div id="app">
-        <nav class="navbar navbar-dark bg-dark navbar-expand-md">
-            <a href="index.html" class="navbar-brand">Firebase Authentication</a>
 
-            <div class="navbar-collapse">
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown" v-if="user">
-                        <a class="nav-link dropdown-toggle" href="#" @click="showLoginMenu = !showLoginMenu">
-                            <img :src="user.photoURL" alt="Foto usuario" class="login-photo bg-light">
-                            {{ user.displayName }}
-                        </a>
-                        <div class="dropdown-menu" :class="{show: showLoginMenu}">
-                            <a class="dropdown-item" href="#" @click="showProfileSection = true; showLoginMenu = false">Profile</a>
-                            <a class="dropdown-item" href="#" @click="logout(); showLoginMenu = false">Logout</a>
-                        </div>
-                    </li>
-                    <li class="nav-link" v-if="!user">
-                        <button class="btn btn-sm btn-outline-primary" @click="showLoginSection = true">Login</button>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+        <navbar></navbar>
+
         <main>
             <div class="container-fluid">
-                <section class="login mb-3 border p-3 shadow" v-if="showLoginSection">
-                    <h2>Login</h2>
 
-                    <ul class="list-inline">
-                        <li class="list-inline-item">
-                            <button class="btn btn-sm btn-outline-primary" @click="anonymousLogin">Anónimo</button>
-                        </li>
-                        <li class="list-inline-item">
-                            <button class="btn btn-sm btn-outline-primary" @click="googleLogin">Google</button>
-                        </li>
-                    </ul>
+                <router-view></router-view>
 
-                    <button class="btn btn-sm btn-outline-secondary" @click="showLoginSection = false">Cerrar</button>
-                </section>
-
-                <section class="profile mb-3 border p-3 shadow" v-if="showProfileSection">
-                    <h2>Profile</h2>
-                    <dl class="row">
-                        <dt class="col-sm-3">uid</dt>
-                        <dd class="col-sm-9">{{ user.uid }}</dd>
-
-                        <dt class="col-sm-3">email</dt>
-                        <dd class="col-sm-9">{{ user.email || 'no definido'}}</dd>
-
-                        <dt class="col-sm-3">isAnonymous</dt>
-                        <dd class="col-sm-9">{{ user.isAnonymous }}</dd>
-
-                        <dt class="col-sm-3">photoURL</dt>
-                        <dd class="col-sm-9">
-                            <img :src="user.photoURL" class="profile-photo" alt="Foto">
-                        </dd>
-                    </dl>
-                </section>
-
-                <section class="notes-list">
-                    <h2>Notas</h2>
-
-                    <div class="notes-list" v-if="notes.length">
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <th>Nota</th>
-                                    <th>Acción</th>
-                                </tr>
-                                <tr v-for="note of notes" :key="note.id">
-                                    <td>{{ note.data.text }}</td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-danger m-0 py-0" @click="deleteNote(note.id)">Eliminar</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <button type="button" class="btn btn-sm btn-outline-info" @click="getNotes">Refrescar</button>
-                </section>
-
-                <section class="notes-add" v-if="user && !user.isAnonymous">
-                    <form class="form mt-2" @submit.prevent="onSubmit">
-                        <div class="input-group">
-                            <input ref="newNoteInput" type="text" class="form-control" v-model="newNote" placeholder="Nueva nota" @keyup.enter="addNote">
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-primary" @click="addNote">Agregar</button>
-                            </div>
-                        </div>
-                    </form>
-                </section>
             </div>
         </main>
     </div>
@@ -152,59 +71,45 @@
             keepOnHover: true,
         });
 
-        const Home = {
-            template: 
-        };
+        const Navbar = Vue.component('navbar', {
+            data() {
+                return {
+                    showLoginMenu: false,
+                    user: null,
+                };
+            },
+            template: `<nav class="navbar navbar-dark bg-dark navbar-expand-md">
+                <a href="index.html" class="navbar-brand">Firebase Authentication</a>
 
-        const routes = [
-            { path: '/home', component: Home },
-            { path: '/login', component: Login },
-            { path: '/profile', component: Profile },
-        ];
-
-        const router = new VueRouter({
-            routes
+                <div class="navbar-collapse">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown" v-if="user">
+                            <a class="nav-link dropdown-toggle" href="#" @click="showLoginMenu = !showLoginMenu">
+                                <img :src="user.photoURL" alt="Foto usuario" class="login-photo bg-light">
+                                {{ user.displayName }}
+                            </a>
+                            <div class="dropdown-menu" :class="{show: showLoginMenu}">
+                                <a class="dropdown-item" href="#" @click="profile">Profile</a>
+                                <a class="dropdown-item" href="#" @click="logout">Logout</a>
+                            </div>
+                        </li>
+                        <li class="nav-link" v-if="!user">
+                            <router-link to="/login" class="btn btn-sm btn-outline-primary">Login</router-link>
+                        </li>
+                    </ul>
+                </div>
+            </nav>`
         });
 
-        const app = new Vue({
-            el: '#app',
-            data: {
-                newNote: '',
-                notes: [],
-                user: null,
-                showLoginSection: false,
-                showLoginMenu: false,
-                showProfileSection: false,
-
-                defaultLoginPhotoURL: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAQAAABLCVATAAABp0lEQVR4AdTVJZRVURiA0Y27uzS8LwruFvGO9Yh2puBOw3vDteEk3KHg7j+Tzpo56zxhTWJ/7em995j/SGcLHHPVE9988dQ1RyzU0T/pZ58votAX+/RTl7bW+iSq9MlabdXQyyVRR5f0UsUID0WdPTRCmb6eiTynbG7sVOGdZwYo6OSKyHptOoDpXousm7qQaxDylmhqqZC3UWaIr4X/y90UWV8N1cw+IW8fan9qP5L2xem3V25vcYq2l8wThW7J3RKF5kl2i2KLNbVYFNsjOSsKFYe/0FnJHVGxE7Y2dkpU7I7ks2hBnyQfRQv6KLkrWtBdyfni/DholfG6gC4mWOVgcb6drzz8Ly3XWUkPO/0uDH9xQj7URzUTvKk0Ids3G7c5aplXWCKFVTRbLbMrL+0Bvqa33hujmtHeS9uI/tU2tmfGqmSsZyLVQK6TGyL1y3pdCmO2wS+RuqKTgoGeCinv7TDZcF0NNNsaZ/zKNv++yox0v+XHEX8HqSBPEGXMKdwVJCJNVaNlBMzMUw1URRQQx9eIAMqSBDiRmjXfoc2aYGCzZsgAAJ59akNQuc64AAAAAElFTkSuQmCC',
-            },
-            created() {
-            },
-            mounted() {
-                const self = this;
-                firebase.auth().onAuthStateChanged(function (user) {
-                    if (user) {
-                        const _user = {
-                            uid: user.uid,
-                            isAnonymous: user.isAnonymous,
-                            displayName: user.isAnonymous ? 'Anónimo' : user.displayName,
-                            email: user.email,
-                            photoURL: user.photoURL || self.defaultLoginPhotoURL,
-                        };
-                        self.user = _user;
-                    } else {
-                        console.log('No hay usuario logueado');
-                        // User is signed out.
-                        // ...
-                    }
-                    // ...
-                });
-                this.observeNotes();
+        const Notes = Vue.component('notes', {
+            data() {
+                return {
+                    newNote: '',
+                    notes: [],
+                    user: null,
+                };
             },
             methods: {
-                onSubmit: function () {
-                    // nothing to do
-                },
                 addNote: function () {
                     const self = this;
                     db.collection('notes').add({
@@ -262,6 +167,50 @@
                             Vue.toasted.error("Error eliminado nota: " + error);
                         })
                 },
+            },
+            template: `<div class="notes">
+                        <section class="notes-list">
+                            <h2>Notas</h2>
+
+                            <div class="notes-list" v-if="notes.length">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <th>Nota</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                        <tr v-for="note of notes" :key="note.id">
+                                            <td>{{ note.data.text }}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-danger m-0 py-0" @click="deleteNote(note.id)">Eliminar</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-info" @click="getNotes">Refrescar</button>
+                        </section>
+
+                        <section class="notes-add" v-if="user && !user.isAnonymous">
+                            <form class="form mt-2" @submit.prevent="onSubmit">
+                                <div class="input-group">
+                                    <input ref="newNoteInput" type="text" class="form-control" v-model="newNote" placeholder="Nueva nota" @keyup.enter="addNote">
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-primary" @click="addNote">Agregar</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </section>
+                    </div>`
+        });
+
+        const Login = Vue.component('login', {
+            data() {
+                return {
+                    user: null,
+                };
+            },
+            methods: {
                 anonymousLogin: function () {
                     firebase.auth().signInAnonymously().catch(function (error) {
                         // Handle Errors here.
@@ -299,27 +248,126 @@
                             Vue.toasted.error(`${errorCode}: ${errorMessage}[${credential}]`);
                         });
                 },
-                logout: function () {
-                    const self = this;
-                    firebase.auth().signOut().then(function () {
-                        console.log('Logout');
-                        self.user = null;
-                    }).catch(function (error) {
-                        console.log({ error });
-                        // Handle Errors here.
-                        const errorCode = error.code;
-                        const errorMessage = error.message;
-                        // The email of the user's account used.
-                        const email = error.email;
-                        // The firebase.auth.AuthCredential type that was used.
-                        const credential = error.credential;
-                        // ...
-                        Vue.toasted.error(`${errorCode}: ${errorMessage}[${credential}]`);
+            },
+            template: `<section class="login" v-if="!user">
+                        <h2>Login</h2>
 
-                    });
-                }
-            }
+                        <ul class="list-inline">
+                            <li class="list-inline-item">
+                                <button class="btn btn-sm btn-outline-primary" @click="anonymousLogin">Anónimo</button>
+                            </li>
+                            <li class="list-inline-item">
+                                <button class="btn btn-sm btn-outline-primary" @click="googleLogin">Google</button>
+                            </li>
+                        </ul>
+
+                        <button class="btn btn-sm btn-outline-secondary" @click="showLoginSection = false">Cerrar</button>
+                    </section>`
         });
+
+        const Profile = Vue.component('profile', {
+            data() {
+                return {
+                    user: null,
+                };
+            },
+            template: `<section class="profile mb-3 border p-3 shadow" v-if="user">
+                        <h2>Profile</h2>
+                        <dl class="row">
+                            <dt class="col-sm-3">uid</dt>
+                            <dd class="col-sm-9">{{ user.uid }}</dd>
+
+                            <dt class="col-sm-3">email</dt>
+                            <dd class="col-sm-9">{{ user.email || 'no definido'}}</dd>
+
+                            <dt class="col-sm-3">isAnonymous</dt>
+                            <dd class="col-sm-9">{{ user.isAnonymous }}</dd>
+
+                            <dt class="col-sm-3">photoURL</dt>
+                            <dd class="col-sm-9">
+                                <img :src="user.photoURL" class="profile-photo" alt="Foto">
+                            </dd>
+                        </dl>
+                    </section>`
+        });
+
+        const routes = [
+            { path: '/notes', component: Notes },
+            { path: '/login', component: Login },
+            { path: '/profile', component: Profile },
+        ];
+
+        const router = new VueRouter({
+            routes
+        });
+
+        const app = new Vue({
+            router
+        }).$mount('#app');
+
+        /*
+                const app = new Vue({
+                    el: '#app',
+                    data: {
+                        newNote: '',
+                        notes: [],
+                        user: null,
+                        showLoginSection: false,
+                        showLoginMenu: false,
+                        showProfileSection: false,
+
+                        defaultLoginPhotoURL: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAQAAABLCVATAAABp0lEQVR4AdTVJZRVURiA0Y27uzS8LwruFvGO9Yh2puBOw3vDteEk3KHg7j+Tzpo56zxhTWJ/7em995j/SGcLHHPVE9988dQ1RyzU0T/pZ58votAX+/RTl7bW+iSq9MlabdXQyyVRR5f0UsUID0WdPTRCmb6eiTynbG7sVOGdZwYo6OSKyHptOoDpXousm7qQaxDylmhqqZC3UWaIr4X/y90UWV8N1cw+IW8fan9qP5L2xem3V25vcYq2l8wThW7J3RKF5kl2i2KLNbVYFNsjOSsKFYe/0FnJHVGxE7Y2dkpU7I7ks2hBnyQfRQv6KLkrWtBdyfni/DholfG6gC4mWOVgcb6drzz8Ly3XWUkPO/0uDH9xQj7URzUTvKk0Ids3G7c5aplXWCKFVTRbLbMrL+0Bvqa33hujmtHeS9uI/tU2tmfGqmSsZyLVQK6TGyL1y3pdCmO2wS+RuqKTgoGeCinv7TDZcF0NNNsaZ/zKNv++yox0v+XHEX8HqSBPEGXMKdwVJCJNVaNlBMzMUw1URRQQx9eIAMqSBDiRmjXfoc2aYGCzZsgAAJ59akNQuc64AAAAAElFTkSuQmCC',
+                    },
+                    created() {
+                    },
+                    mounted() {
+                        const self = this;
+                        firebase.auth().onAuthStateChanged(function (user) {
+                            if (user) {
+                                const _user = {
+                                    uid: user.uid,
+                                    isAnonymous: user.isAnonymous,
+                                    displayName: user.isAnonymous ? 'Anónimo' : user.displayName,
+                                    email: user.email,
+                                    photoURL: user.photoURL || self.defaultLoginPhotoURL,
+                                };
+                                self.user = _user;
+                            } else {
+                                console.log('No hay usuario logueado');
+                                // User is signed out.
+                                // ...
+                            }
+                            // ...
+                        });
+                        this.observeNotes();
+                    },
+                    methods: {
+                        onSubmit: function () {
+                            // nothing to do
+                        },
+
+                        logout: function () {
+                            const self = this;
+                            firebase.auth().signOut().then(function () {
+                                console.log('Logout');
+                                self.user = null;
+                            }).catch(function (error) {
+                                console.log({ error });
+                                // Handle Errors here.
+                                const errorCode = error.code;
+                                const errorMessage = error.message;
+                                // The email of the user's account used.
+                                const email = error.email;
+                                // The firebase.auth.AuthCredential type that was used.
+                                const credential = error.credential;
+                                // ...
+                                Vue.toasted.error(`${errorCode}: ${errorMessage}[${credential}]`);
+
+                            });
+                        }
+                    }
+                });
+                */
     </script>
 </body>
 
