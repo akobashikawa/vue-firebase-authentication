@@ -275,8 +275,6 @@
                             const token = result.credential.accessToken;
                             // The signed-in user info.
                             const user = result.user;
-
-                            console.log(user);
                         })
                         .catch(function (error) {
                             console.log({ error });
@@ -322,15 +320,22 @@
                             <dt class="col-sm-3">uid</dt>
                             <dd class="col-sm-9">{{ user.uid }}</dd>
 
+                            <dt class="col-sm-3">provider</dt>
+                            <dd class="col-sm-9">{{ user.provider || 'no definido'}}</dd>
+
                             <dt class="col-sm-3">email</dt>
                             <dd class="col-sm-9">{{ user.email || 'no definido'}}</dd>
+
+                            <dt class="col-sm-3">email verificado</dt>
+                            <dd class="col-sm-9">{{ user.emailVerified || 'no definido'}}</dd>
 
                             <dt class="col-sm-3">isAnonymous</dt>
                             <dd class="col-sm-9">{{ user.isAnonymous }}</dd>
 
                             <dt class="col-sm-3">photoURL</dt>
                             <dd class="col-sm-9">
-                                <img :src="user.photoURL" class="profile-photo" alt="Foto">
+                                <img :src="user.photoURL" class="profile-photo" alt="Foto" v-if="user.photoURL">
+                                <span v-else>no definido</span>
                             </dd>
                         </dl>
                     </section>`
@@ -366,12 +371,15 @@
                 const self = this;
                 firebase.auth().onAuthStateChanged(function (user) {
                     if (user) {
+                        console.log(user);
                         const _user = {
                             uid: user.uid,
+                            provider: user.providerData.length > 0 ? user.providerData[0].providerId : 'Anonymous',
                             isAnonymous: user.isAnonymous,
                             displayName: user.isAnonymous ? 'Anónimo' : user.displayName,
                             email: user.email,
-                            photoURL: user.photoURL || self.defaultLoginPhotoURL,
+                            emailVerified: user.emailVerified,
+                            photoURL: user.photoURL,
                         };
                         self.$store.dispatch('setUser', _user);
                     } else {
