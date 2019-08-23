@@ -10,6 +10,9 @@ const Login = Vue.component('login', {
             <li class="list-inline-item">
                 <button class="btn btn-sm btn-outline-primary" @click="googleLogin">Google</button>
             </li>
+            <li class="list-inline-item">
+                <button class="btn btn-sm btn-outline-primary" @click="emailPasswordLogin">Email/Password</button>
+            </li>
         </ul>
     </section>
     `,
@@ -29,6 +32,10 @@ const Login = Vue.component('login', {
         },
         googleLogin: function () {
             this.$store.dispatch('googleLogin');
+            this.$router.push('/');
+        },
+        emailPasswordLogin: function () {
+            this.$store.dispatch('emailPasswordLogin');
             this.$router.push('/');
         },
     },
