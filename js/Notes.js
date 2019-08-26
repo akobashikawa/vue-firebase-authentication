@@ -54,6 +54,7 @@ const Notes = Vue.component('notes', {
         }
     },
     mounted() {
+        this.observeNotes();
     },
     methods: {
         addNote: function () {
