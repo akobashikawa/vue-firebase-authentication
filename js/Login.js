@@ -15,8 +15,16 @@ const Login = Vue.component('login', {
                     <input type="text" class="form-control" v-model="email" placeholder="Email">
                     <input type="password" class="form-control" v-model="password" placeholder="Password">
                     <div class="input-group-append">
-                        <button class="btn btn-sm btn-outline-primary" @click="passwordLogin">Email/Password</button>
-                        <button class="btn btn-sm btn-outline-primary" @click="customPasswordLogin">Custom Email/Password</button>
+                        <button class="btn btn-sm btn-outline-primary" @click="passwordLogin">Password</button>
+                    </div>
+                </div>
+            </li>
+            <li class="mb-2">
+                <div class="input-group col-sm-4 p-0">
+                    <input type="text" class="form-control" v-model="email" placeholder="Email">
+                    <input type="password" class="form-control" v-model="password" placeholder="Password">
+                    <div class="input-group-append">
+                        <button class="btn btn-sm btn-outline-primary" @click="customLogin">Custom</button>
                     </div>
                 </div>
             </li>
@@ -27,6 +35,7 @@ const Login = Vue.component('login', {
         return {
             email: null,
             password: null,
+            token: null,
         };
     },
     computed: {
@@ -67,11 +76,11 @@ const Login = Vue.component('login', {
                 console.log('resultOK', resultOK);
             }
         },
-        customPasswordLogin: async function () {
+        customLogin: async function () {
             const email = this.email;
             const password = this.password;
             try {
-                const resultOK = await this.$store.dispatch('customPasswordLogin', { email, password });
+                const resultOK = await this.$store.dispatch('customLogin', { email, password });
                 console.log('resultOK', resultOK);
                 if (resultOK) {
                     this.$router.push('/').catch(err => { });

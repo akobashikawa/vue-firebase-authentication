@@ -104,30 +104,23 @@ const store = new Vuex.Store({
             }
 
         },
-        async customPasswordLogin({ commit }, payload) {
+        async customLogin({ commit }, payload) {
             const email = payload.email;
             const password = payload.password;
 
             try {
-                const methods = await firebase
+                const url = 'http://localhost:4000/api/v2/auth/login-firebase';
+                const method = 'POST';
+                const data = { email, password };
+                const result = await axios({ url, method, data });
+                console.log(result.data);
+                const token = result.data.firebaseToken;
+
+                const user = await firebase
                     .auth()
-                    .fetchSignInMethodsForEmail(email);
-                console.log(methods);
-                if (methods.length == 0) {
-                    const user = await firebase
-                        .auth()
-                        .createUserWithEmailAndPassword(email, password);
-                    console.log('user', user);
-                }
-                if (methods.includes('password')) {
-                    const user = await firebase
-                        .auth()
-                        .signInWithEmailAndPassword(email, password);
-                    console.log('user', user);
-                    return Promise.resolve(true); // para ayudar a controlar flujo
-                } else if (methods.includes('google.com')) {
-                    this.dispatch('googleLogin');
-                }
+                    .signInWithCustomToken(token);
+                console.log('user', user);
+                return Promise.resolve(true); // para ayudar a controlar flujo
             } catch (error) {
                 commit('setError', error);
                 return Promise.reject(false);
