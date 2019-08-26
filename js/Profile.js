@@ -12,8 +12,8 @@ const Profile = Vue.component('profile', {
             <dt class="col-sm-3">email</dt>
             <dd class="col-sm-9">{{ user.email || 'no definido'}}</dd>
 
-            <dt class="col-sm-3">email verificado</dt>
-            <dd class="col-sm-9">{{ user.emailVerified || 'no definido'}}</dd>
+            <dt class="col-sm-3">emailVerified</dt>
+            <dd class="col-sm-9">{{ user.emailVerified }}</dd>
 
             <dt class="col-sm-3">isAnonymous</dt>
             <dd class="col-sm-9">{{ user.isAnonymous }}</dd>

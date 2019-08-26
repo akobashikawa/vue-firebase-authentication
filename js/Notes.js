@@ -2,7 +2,7 @@ const Notes = Vue.component('notes', {
     template: `
     <div class="notes mb-3 p-3 shadow">
         <section class="notes-list">
-            <h2>Notas en {{ board }}</h2>
+            <h2>Notas de {{ board }}</h2>
 
             <div class="notes-list" v-if="notes.length">
                 <table class="table">
@@ -51,6 +51,12 @@ const Notes = Vue.component('notes', {
             const board = (this.$store.state.user && this.$store.state.user.email) || 'anonymous';
             this.board = board;
             this.observeNotes();
+        },
+        error(newValue, oldValue) {
+            const error = newValue;
+            if (error) {
+                Vue.toasted.error(`Error en login ${error.code}: ${error.message}`);
+            }
         }
     },
     mounted() {
@@ -80,7 +86,6 @@ const Notes = Vue.component('notes', {
                 });
         },
         getNotes: function () {
-            console.log('getNotes', this.board);
             const self = this;
             const boardRef = db.collection("board").doc(this.board);
             boardRef
@@ -100,7 +105,6 @@ const Notes = Vue.component('notes', {
                 });
         },
         observeNotes: function () {
-            console.log('observeNotes', this.board);
             const self = this;
             const boardRef = db.collection("board").doc(this.board);
             boardRef

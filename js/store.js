@@ -13,10 +13,13 @@ const store = new Vuex.Store({
         },
         setStatus(state, status) {
             state.status = status;
+            if (status == 'success') {
+                state.error = null;
+            }
         },
         setError(state, error) {
-            console.log('setError', error);
             state.error = error;
+            state.status = 'error';
         },
     },
     actions: {
@@ -40,6 +43,7 @@ const store = new Vuex.Store({
                         _user.displayName = user.email;
                     }
                     commit('setUser', _user);
+                    commit('setStatus', 'success');
                 } else {
                     console.log('Logout');
                 }
@@ -47,7 +51,7 @@ const store = new Vuex.Store({
         },
         anonymousLogin({ commit }) {
             firebase.auth().signInAnonymously().catch(function (error) {
-                commit('setError', `[${error.code}] ${error.message}`);
+                commit('setError', error);
             });
         },
         googleLogin({ commit }) {
@@ -64,9 +68,11 @@ const store = new Vuex.Store({
                     // The signed-in user info.
                     const user = result.user;
                     commit('setUser', user);
+                    return Promise.resolve(true);
                 })
                 .catch(function (error) {
-                    commit('setError', `[${error.code}] ${error.message}`);
+                    commit('setError', error);
+                    return Promise.reject(false);
                 });
         },
         async emailPasswordLogin({ commit }, payload) {
@@ -82,17 +88,20 @@ const store = new Vuex.Store({
                     const user = await firebase
                         .auth()
                         .createUserWithEmailAndPassword(email, password);
-                    console.log(user);
+                    console.log('user', user);
                 }
                 if (methods.includes('password')) {
-                    console.log('provider password');
-                    const result = firebase
+                    const user = await firebase
                         .auth()
                         .signInWithEmailAndPassword(email, password);
-                    console.log(result);
+                    console.log('user', user);
+                    return Promise.resolve(true);
+                } else if (methods.includes('google.com')) {
+                    this.dispatch('googleLogin');
                 }
             } catch (error) {
-                commit('setError', `[${error.code}] ${error.message}`);
+                commit('setError', error);
+                return Promise.reject(false);
             }
 
         },
@@ -101,7 +110,7 @@ const store = new Vuex.Store({
                 console.log('Logout');
                 commit('removeUser');
             }).catch(function (error) {
-                commit('setError', `[${error.code}] ${error.message}`);
+                commit('setError', error);
             });
         }
 

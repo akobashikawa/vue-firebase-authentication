@@ -40,6 +40,7 @@ const Navbar = Vue.component('navbar', {
         logout() {
             this.showLoginMenu = false;
             this.$store.dispatch('logout');
+            this.$router.push('/');
         }
     },
 });
