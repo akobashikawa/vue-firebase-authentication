@@ -15,6 +15,7 @@ const store = new Vuex.Store({
             state.status = status;
         },
         setError(state, error) {
+            console.log('setError', error);
             state.error = error;
         },
     },
@@ -35,6 +36,9 @@ const store = new Vuex.Store({
                         emailVerified: user.emailVerified,
                         photoURL: user.photoURL,
                     };
+                    if (!_user.displayName) {
+                        _user.displayName = user.email;
+                    }
                     commit('setUser', _user);
                 } else {
                     console.log('Logout');
@@ -59,8 +63,26 @@ const store = new Vuex.Store({
                     const token = result.credential.accessToken;
                     // The signed-in user info.
                     const user = result.user;
+                    commit('setUser', user);
                 })
                 .catch(function (error) {
+                    commit('setError', `[${error.code}] ${error.message}`);
+                });
+        },
+        emailPasswordLogin({ commit }, payload) {
+            const email = payload.email;
+            const password = payload.password;
+
+            firebase
+                .auth()
+                .createUserWithEmailAndPassword(email, password)
+                .then(x => {
+                    console.log('then in store', x);
+                    commit('setStatus', 'success');
+                    return Promise.reject(x);
+                })
+                .catch(function (error) {
+                    commit('setStatus', 'error');
                     commit('setError', `[${error.code}] ${error.message}`);
                 });
         },

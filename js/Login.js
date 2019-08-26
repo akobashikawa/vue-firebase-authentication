@@ -21,8 +21,14 @@ const Login = Vue.component('login', {
         };
     },
     computed: {
-        user() {
-            return this.$store.state.user;
+        ...Vuex.mapState(['user', 'status', 'error'])
+    },
+    watch: {
+        error(newValue, oldValue) {
+            console.log('watch error', newValue, oldValue);
+            const error = newValue;
+            if (error) {
+            }
         }
     },
     methods: {
@@ -35,7 +41,13 @@ const Login = Vue.component('login', {
             this.$router.push('/');
         },
         emailPasswordLogin: function () {
-            this.$store.dispatch('emailPasswordLogin');
+            this.$store.dispatch('emailPasswordLogin', { email: 'akobashikawa+01@gmail.com', password: '12345678' })
+                .then(result => {
+
+                })
+                .catch(error => {
+                    console.log('error by component', error);
+                });
             this.$router.push('/');
         },
     },

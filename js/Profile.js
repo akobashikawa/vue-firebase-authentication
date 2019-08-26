@@ -31,9 +31,7 @@ const Profile = Vue.component('profile', {
         };
     },
     computed: {
-        user() {
-            return this.$store.state.user;
-        }
+        ...Vuex.mapState(['user', 'status', 'error'])
     },
 });
 

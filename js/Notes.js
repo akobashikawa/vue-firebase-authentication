@@ -40,18 +40,20 @@ const Notes = Vue.component('notes', {
         return {
             newNote: '',
             notes: [],
+            board: 'anonymous',
         };
     },
     computed: {
+        ...Vuex.mapState(['user', 'status', 'error'])
+    },
+    watch: {
         user() {
-            return this.$store.state.user;
-        },
-        board() {
-            return (this.$store.state.user && this.$store.state.user.email) || 'anonymous';
-        },
+            const board = (this.$store.state.user && this.$store.state.user.email) || 'anonymous';
+            this.board = board;
+            this.observeNotes();
+        }
     },
     mounted() {
-        this.observeNotes();
     },
     methods: {
         addNote: function () {
@@ -77,7 +79,8 @@ const Notes = Vue.component('notes', {
                 });
         },
         getNotes: function () {
-            console.log('getNotes');
+            console.log('getNotes', this.board);
+            const self = this;
             const boardRef = db.collection("board").doc(this.board);
             boardRef
                 .collection('notes')
@@ -92,10 +95,11 @@ const Notes = Vue.component('notes', {
                         };
                         result.push(item);
                     });
-                    this.notes = result;
+                    self.notes = result;
                 });
         },
         observeNotes: function () {
+            console.log('observeNotes', this.board);
             const self = this;
             const boardRef = db.collection("board").doc(this.board);
             boardRef

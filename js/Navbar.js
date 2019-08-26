@@ -30,9 +30,7 @@ const Navbar = Vue.component('navbar', {
         };
     },
     computed: {
-        user() {
-            return this.$store.state.user;
-        }
+        ...Vuex.mapState(['user', 'status', 'error'])
     },
     methods: {
         profile() {

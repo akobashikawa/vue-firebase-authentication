@@ -16,9 +16,6 @@ const app = new Vue({
         };
     },
     computed: {
-        user() {
-            return this.$store.state.user;
-        }
     },
     mounted() {
         this.$store.dispatch('observeLogin');
