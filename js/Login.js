@@ -15,7 +15,8 @@ const Login = Vue.component('login', {
                     <input type="text" class="form-control" v-model="email" placeholder="Email">
                     <input type="password" class="form-control" v-model="password" placeholder="Password">
                     <div class="input-group-append">
-                        <button class="btn btn-sm btn-outline-primary" @click="emailPasswordLogin">Email/Password</button>
+                        <button class="btn btn-sm btn-outline-primary" @click="passwordLogin">Email/Password</button>
+                        <button class="btn btn-sm btn-outline-primary" @click="customPasswordLogin">Custom Email/Password</button>
                     </div>
                 </div>
             </li>
@@ -53,11 +54,24 @@ const Login = Vue.component('login', {
             this.$store.dispatch('googleLogin');
             this.$router.push('/').catch(err => { });
         },
-        emailPasswordLogin: async function () {
+        passwordLogin: async function () {
             const email = this.email;
             const password = this.password;
             try {
-                const resultOK = await this.$store.dispatch('emailPasswordLogin', { email, password });
+                const resultOK = await this.$store.dispatch('passwordLogin', { email, password });
+                console.log('resultOK', resultOK);
+                if (resultOK) {
+                    this.$router.push('/').catch(err => { });
+                }
+            } catch (resultOK) {
+                console.log('resultOK', resultOK);
+            }
+        },
+        customPasswordLogin: async function () {
+            const email = this.email;
+            const password = this.password;
+            try {
+                const resultOK = await this.$store.dispatch('customPasswordLogin', { email, password });
                 console.log('resultOK', resultOK);
                 if (resultOK) {
                     this.$router.push('/').catch(err => { });

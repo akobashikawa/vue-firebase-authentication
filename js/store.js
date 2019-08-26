@@ -74,7 +74,37 @@ const store = new Vuex.Store({
                     return Promise.reject(false);
                 });
         },
-        async emailPasswordLogin({ commit }, payload) {
+        async passwordLogin({ commit }, payload) {
+            const email = payload.email;
+            const password = payload.password;
+
+            try {
+                const methods = await firebase
+                    .auth()
+                    .fetchSignInMethodsForEmail(email);
+                console.log(methods);
+                if (methods.length == 0) {
+                    const user = await firebase
+                        .auth()
+                        .createUserWithEmailAndPassword(email, password);
+                    console.log('user', user);
+                }
+                if (methods.includes('password')) {
+                    const user = await firebase
+                        .auth()
+                        .signInWithEmailAndPassword(email, password);
+                    console.log('user', user);
+                    return Promise.resolve(true); // para ayudar a controlar flujo
+                } else if (methods.includes('google.com')) {
+                    this.dispatch('googleLogin');
+                }
+            } catch (error) {
+                commit('setError', error);
+                return Promise.reject(false);
+            }
+
+        },
+        async customPasswordLogin({ commit }, payload) {
             const email = payload.email;
             const password = payload.password;
 
