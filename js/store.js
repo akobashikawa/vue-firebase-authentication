@@ -69,22 +69,32 @@ const store = new Vuex.Store({
                     commit('setError', `[${error.code}] ${error.message}`);
                 });
         },
-        emailPasswordLogin({ commit }, payload) {
+        async emailPasswordLogin({ commit }, payload) {
             const email = payload.email;
             const password = payload.password;
 
-            firebase
-                .auth()
-                .createUserWithEmailAndPassword(email, password)
-                .then(x => {
-                    console.log('then in store', x);
-                    commit('setStatus', 'success');
-                    return Promise.reject(x);
-                })
-                .catch(function (error) {
-                    commit('setStatus', 'error');
-                    commit('setError', `[${error.code}] ${error.message}`);
-                });
+            try {
+                const methods = await firebase
+                    .auth()
+                    .fetchSignInMethodsForEmail(email);
+                console.log(methods);
+                if (methods.length == 0) {
+                    const user = await firebase
+                        .auth()
+                        .createUserWithEmailAndPassword(email, password);
+                    console.log(user);
+                }
+                if (methods.includes('password')) {
+                    console.log('provider password');
+                    const result = firebase
+                        .auth()
+                        .signInWithEmailAndPassword(email, password);
+                    console.log(result);
+                }
+            } catch (error) {
+                commit('setError', `[${error.code}] ${error.message}`);
+            }
+
         },
         logout({ commit }) {
             firebase.auth().signOut().then(function () {
