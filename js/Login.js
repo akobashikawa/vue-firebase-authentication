@@ -47,11 +47,11 @@ const Login = Vue.component('login', {
     methods: {
         anonymousLogin: function () {
             this.$store.dispatch('anonymousLogin');
-            this.$router.push('/');
+            this.$router.push('/').catch(err => { });
         },
         googleLogin: function () {
             this.$store.dispatch('googleLogin');
-            this.$router.push('/');
+            this.$router.push('/').catch(err => { });
         },
         emailPasswordLogin: async function () {
             const email = this.email;
@@ -60,7 +60,7 @@ const Login = Vue.component('login', {
                 const resultOK = await this.$store.dispatch('emailPasswordLogin', { email, password });
                 console.log('resultOK', resultOK);
                 if (resultOK) {
-                    this.$router.push('/');
+                    this.$router.push('/').catch(err => { });
                 }
             } catch (resultOK) {
                 console.log('resultOK', resultOK);

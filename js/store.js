@@ -45,7 +45,7 @@ const store = new Vuex.Store({
                     commit('setUser', _user);
                     commit('setStatus', 'success');
                 } else {
-                    console.log('Logout');
+                    commit('removeUser');
                 }
             });
         },
@@ -67,8 +67,7 @@ const store = new Vuex.Store({
                     const token = result.credential.accessToken;
                     // The signed-in user info.
                     const user = result.user;
-                    commit('setUser', user);
-                    return Promise.resolve(true);
+                    return Promise.resolve(true);// para ayudar a controlar flujo
                 })
                 .catch(function (error) {
                     commit('setError', error);
@@ -95,7 +94,7 @@ const store = new Vuex.Store({
                         .auth()
                         .signInWithEmailAndPassword(email, password);
                     console.log('user', user);
-                    return Promise.resolve(true);
+                    return Promise.resolve(true); // para ayudar a controlar flujo
                 } else if (methods.includes('google.com')) {
                     this.dispatch('googleLogin');
                 }
@@ -108,7 +107,6 @@ const store = new Vuex.Store({
         logout({ commit }) {
             firebase.auth().signOut().then(function () {
                 console.log('Logout');
-                commit('removeUser');
             }).catch(function (error) {
                 commit('setError', error);
             });

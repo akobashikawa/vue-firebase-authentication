@@ -35,12 +35,12 @@ const Navbar = Vue.component('navbar', {
     methods: {
         profile() {
             this.showLoginMenu = false;
-            this.$router.push('/profile');
+            this.$router.push('/profile').catch(err => { });
         },
         logout() {
             this.showLoginMenu = false;
             this.$store.dispatch('logout');
-            this.$router.push('/');
+            this.$router.push('/').catch(err => { });
         }
     },
 });
