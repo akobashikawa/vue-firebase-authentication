@@ -5,6 +5,9 @@ const Navbar = Vue.component('navbar', {
 
         <div class="navbar-collapse">
             <ul class="navbar-nav">
+                <li class="nav-item">
+                    <router-link to="/" class="nav-link">Inicio</router-link>
+                </li>
                 <li class="nav-item dropdown" v-if="user">
                     <a class="nav-link dropdown-toggle" href="#" @click="showLoginMenu = !showLoginMenu">
                         <img :src="user.photoURL" alt="" class="login-photo bg-light" v-if="user.photoURL">
