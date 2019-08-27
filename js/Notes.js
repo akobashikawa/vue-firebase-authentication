@@ -48,7 +48,7 @@ const Notes = Vue.component('notes', {
     },
     watch: {
         user() {
-            const board = (this.$store.state.user && this.$store.state.user.email) || 'anonymous';
+            const board = this.$store.state.user ? this.$store.state.user.displayName : 'anonymous';
             this.board = board;
             this.observeNotes();
         },

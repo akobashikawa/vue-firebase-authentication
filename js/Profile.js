@@ -6,11 +6,14 @@ const Profile = Vue.component('profile', {
             <dt class="col-sm-3">uid</dt>
             <dd class="col-sm-9">{{ user.uid }}</dd>
 
+            <dt class="col-sm-3">displayName</dt>
+            <dd class="col-sm-9">{{ user.displayName || '-'}}</dd>
+
             <dt class="col-sm-3">provider</dt>
-            <dd class="col-sm-9">{{ user.provider || 'no definido'}}</dd>
+            <dd class="col-sm-9">{{ user.provider || '-'}}</dd>
 
             <dt class="col-sm-3">email</dt>
-            <dd class="col-sm-9">{{ user.email || 'no definido'}}</dd>
+            <dd class="col-sm-9">{{ user.email || '-'}}</dd>
 
             <dt class="col-sm-3">emailVerified</dt>
             <dd class="col-sm-9">{{ user.emailVerified }}</dd>
@@ -21,7 +24,7 @@ const Profile = Vue.component('profile', {
             <dt class="col-sm-3">photoURL</dt>
             <dd class="col-sm-9">
                 <img :src="user.photoURL" class="profile-photo" alt="Foto" v-if="user.photoURL">
-                <span v-else>no definido</span>
+                <span v-else>-</span>
             </dd>
         </dl>
     </section>

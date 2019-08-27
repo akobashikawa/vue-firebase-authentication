@@ -32,9 +32,9 @@ const store = new Vuex.Store({
                     console.log(user);
                     const _user = {
                         uid: user.uid,
-                        provider: user.providerData.length > 0 ? user.providerData[0].providerId : 'anonymous',
+                        provider: user.providerData.length > 0 ? user.providerData[0].providerId : '',
                         isAnonymous: user.isAnonymous,
-                        displayName: user.isAnonymous ? 'Anónimo' : user.displayName,
+                        displayName: user.isAnonymous ? 'anonymous' : user.displayName,
                         email: user.email,
                         emailVerified: user.emailVerified,
                         photoURL: user.photoURL,
@@ -113,8 +113,9 @@ const store = new Vuex.Store({
                 const method = 'POST';
                 const data = { email, password };
                 const result = await axios({ url, method, data });
-                console.log(result.data);
-                const token = result.data.firebaseToken;
+                const resultUser = result.data;
+                console.log(resultUser);
+                const token = resultUser.firebaseToken;
 
                 const user = await firebase
                     .auth()
