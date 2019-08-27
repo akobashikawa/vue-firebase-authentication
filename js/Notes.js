@@ -26,7 +26,7 @@ const Notes = Vue.component('notes', {
             <button type="button" class="btn btn-sm btn-outline-info mt-2" @click="getNotes">Refrescar</button>
         </section>
 
-        <section class="notes-add mt-2" v-if="user && user.uid">
+        <section class="notes-add mt-2">
             <div class="input-group">
                 <input ref="newNoteInput" type="text" class="form-control" v-model="newNote" placeholder="Nueva nota" @keyup.enter="addNote">
                 <div class="input-group-append">
