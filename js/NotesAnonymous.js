@@ -2,7 +2,7 @@ const NotesUser = Vue.component('notes-user', {
     template: `
     <div class="notes mb-3 p-3 shadow">
         <section class="notes-list">
-            <h2>Notas de <input type="text" class="" v-model="board" placeholder="uid"/></h2>
+            <h2>Notas de <input type="text" class="" v-model="board" placeholder="uid" disabled/></h2>
 
             <div class="notes-list" v-if="notes.length">
                 <table class="table">
@@ -40,18 +40,13 @@ const NotesUser = Vue.component('notes-user', {
         return {
             newNote: '',
             notes: [],
-            board: '',
+            board: 'anonymous',
         };
     },
     computed: {
         ...Vuex.mapState(['user', 'status', 'error'])
     },
     watch: {
-        user() {
-            const board = this.$store.state.user ? this.$store.state.user.uid : '';
-            this.board = board;
-            this.getNotes();
-        },
         error(newValue, oldValue) {
             const error = newValue;
             if (error) {

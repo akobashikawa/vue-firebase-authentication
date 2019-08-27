@@ -1,12 +1,14 @@
 import NotesUser from './NotesUser.js';
+import NotesAnonymous from './NotesAnonymous.js';
 
 const Notes = Vue.component('notes', {
     components: {
-        NotesUser
+        NotesUser, NotesAnonymous
     },
     template: `
     <div class="notes-user">
         <NotesUser />
+        <NotesAnonymous />
     </div>
     `,
     data() {
