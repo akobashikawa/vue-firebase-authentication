@@ -49,8 +49,13 @@ const NotesUser = Vue.component('notes-user', {
     watch: {
         user() {
             const board = this.$store.state.user ? this.$store.state.user.uid : '';
-            this.board = board;
-            this.getNotes();
+            if (!this.board) {
+                this.board = board;
+                this.observeNotes();
+            } else {
+                this.board = board;
+                this.getNotes();
+            }
         },
         error(newValue, oldValue) {
             const error = newValue;
@@ -60,7 +65,6 @@ const NotesUser = Vue.component('notes-user', {
         }
     },
     mounted() {
-        this.observeNotes();
     },
     methods: {
         addNote: function () {
@@ -91,6 +95,7 @@ const NotesUser = Vue.component('notes-user', {
                 });
         },
         getNotes: function () {
+            console.log('getNotes');
             if (!this.board) {
                 Vue.toasted.error('No hay board');
                 return;
@@ -115,10 +120,7 @@ const NotesUser = Vue.component('notes-user', {
                 });
         },
         observeNotes: function () {
-            if (!this.board) {
-                Vue.toasted.error('No hay board');
-                return;
-            };
+            console.log('observeNotes');
 
             const self = this;
             const boardRef = db.collection("board").doc(this.board);

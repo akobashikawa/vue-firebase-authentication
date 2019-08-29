@@ -1,8 +1,8 @@
-const NotesUser = Vue.component('notes-user', {
+const NotesAnonymous = Vue.component('notes-anonymous', {
     template: `
     <div class="notes mb-3 p-3 shadow">
         <section class="notes-list">
-            <h2>Notas de <input type="text" class="" v-model="board" placeholder="uid" disabled/></h2>
+            <h2>Notas de anonymous</h2>
 
             <div class="notes-list" v-if="notes.length">
                 <table class="table">
@@ -59,11 +59,6 @@ const NotesUser = Vue.component('notes-user', {
     },
     methods: {
         addNote: function () {
-            if (!this.board) {
-                Vue.toasted.error('No hay board');
-                return;
-            };
-
             console.log('addNote');
             const self = this;
             const newNote = {
@@ -86,6 +81,8 @@ const NotesUser = Vue.component('notes-user', {
                 });
         },
         getNotes: function () {
+            console.log('getNotes');
+
             if (!this.board) {
                 Vue.toasted.error('No hay board');
                 return;
@@ -110,10 +107,7 @@ const NotesUser = Vue.component('notes-user', {
                 });
         },
         observeNotes: function () {
-            if (!this.board) {
-                Vue.toasted.error('No hay board');
-                return;
-            };
+            console.log('observeNotes');
 
             const self = this;
             const boardRef = db.collection("board").doc(this.board);
@@ -133,11 +127,6 @@ const NotesUser = Vue.component('notes-user', {
                 });
         },
         deleteNote: function (id) {
-            if (!this.board) {
-                Vue.toasted.error('No hay board');
-                return;
-            };
-
             const self = this;
             const boardRef = db.collection("board").doc(this.board);
             boardRef
@@ -159,4 +148,4 @@ const NotesUser = Vue.component('notes-user', {
     },
 });
 
-export default NotesUser;
+export default NotesAnonymous;
