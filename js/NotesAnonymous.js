@@ -110,7 +110,12 @@ const NotesAnonymous = Vue.component('notes-anonymous', {
             console.log('observeNotes');
 
             const self = this;
-            const boardRef = db.collection("board").doc(this.board);
+            const boardRef = null;
+            try {
+                boardRef = db.collection("board").doc(this.board);
+            } catch (error) {
+                return;
+            }
             boardRef
                 .collection('notes')
                 .orderBy("createdAt")
