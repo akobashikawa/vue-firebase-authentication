@@ -65,7 +65,7 @@ const NotesAnonymous = Vue.component('notes-anonymous', {
                 text: this.newNote,
                 createdAt: new Date()
             };
-            const boardRef = db.collection("board").doc(this.board);
+            const boardRef = db.collection("boards").doc(this.board);
             boardRef
                 .collection('notes')
                 .add(newNote)
@@ -89,7 +89,7 @@ const NotesAnonymous = Vue.component('notes-anonymous', {
             };
 
             const self = this;
-            const boardRef = db.collection("board").doc(this.board);
+            const boardRef = db.collection("boards").doc(this.board);
             boardRef
                 .collection('notes')
                 .orderBy("createdAt")
@@ -112,7 +112,7 @@ const NotesAnonymous = Vue.component('notes-anonymous', {
             const self = this;
             const boardRef = null;
             try {
-                boardRef = db.collection("board").doc(this.board);
+                boardRef = db.collection("boards").doc(this.board);
             } catch (error) {
                 return;
             }
@@ -133,7 +133,7 @@ const NotesAnonymous = Vue.component('notes-anonymous', {
         },
         deleteNote: function (id) {
             const self = this;
-            const boardRef = db.collection("board").doc(this.board);
+            const boardRef = db.collection("boards").doc(this.board);
             boardRef
                 .collection('notes')
                 .doc(id)

@@ -49,6 +49,7 @@ const NotesUser = Vue.component('notes-user', {
     watch: {
         user() {
             const board = this.$store.state.user ? this.$store.state.user.uid : '';
+            console.log(board);
             if (!this.board) {
                 this.board = board;
                 this.observeNotes();
@@ -68,19 +69,23 @@ const NotesUser = Vue.component('notes-user', {
     },
     methods: {
         addNote: function () {
-            if (!this.board) {
-                Vue.toasted.error('No hay board');
-                return;
-            };
-
             console.log('addNote');
             const self = this;
             const newNote = {
                 text: this.newNote,
                 createdAt: new Date()
             };
-            const boardRef = db.collection("board").doc(this.board);
-            boardRef
+
+            const boardRef = db.collection("boards").doc(this.board);
+            // const boardRef = null;
+            // try {
+            //     console.log('board', this.board);
+            //     boardRef = db.collection("boards").doc(this.board);
+            // } catch (error) {
+            //     console.log('no board');
+            //     return;
+            // }
+            db.collection("boards").doc(this.board)
                 .collection('notes')
                 .add(newNote)
                 .then(docRef => {
@@ -96,13 +101,12 @@ const NotesUser = Vue.component('notes-user', {
         },
         getNotes: function () {
             console.log('getNotes');
-            if (!this.board) {
-                Vue.toasted.error('No hay board');
-                return;
-            };
-
             const self = this;
-            const boardRef = db.collection("board").doc(this.board);
+            try {
+                boardRef = db.collection("boards").doc(this.board);
+            } catch (error) {
+                return;
+            }
             boardRef
                 .collection('notes')
                 .orderBy("createdAt")
@@ -123,7 +127,11 @@ const NotesUser = Vue.component('notes-user', {
             console.log('observeNotes');
 
             const self = this;
-            const boardRef = db.collection("board").doc(this.board);
+            try {
+                boardRef = db.collection("boards").doc(this.board);
+            } catch (error) {
+                return;
+            }
             boardRef
                 .collection('notes')
                 .orderBy("createdAt")
@@ -140,13 +148,12 @@ const NotesUser = Vue.component('notes-user', {
                 });
         },
         deleteNote: function (id) {
-            if (!this.board) {
-                Vue.toasted.error('No hay board');
-                return;
-            };
-
             const self = this;
-            const boardRef = db.collection("board").doc(this.board);
+            try {
+                boardRef = db.collection("boards").doc(this.board);
+            } catch (error) {
+                return;
+            }
             boardRef
                 .collection('notes')
                 .doc(id)
