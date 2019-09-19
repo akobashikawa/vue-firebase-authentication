@@ -42,8 +42,13 @@ const Navbar = Vue.component('navbar', {
         },
         logout() {
             this.showLoginMenu = false;
-            this.$store.dispatch('logout');
-            this.$router.push('/').catch(err => { });
+            this.$store.dispatch('logout')
+                .then(response => {
+                    this.$router.push('/').catch(err => { });
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         }
     },
 });
