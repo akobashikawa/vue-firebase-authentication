@@ -50,12 +50,12 @@ const NotesUser = Vue.component('notes-user', {
         user() {
             const board = this.$store.state.user ? this.$store.state.user.uid : '';
             console.log(board);
-            if (!this.board) {
-                this.board = board;
-                this.observeNotes();
-            } else {
+            if (this.board) {
                 this.board = board;
                 this.getNotes();
+            } else {
+                this.board = board;
+                this.observeNotes();
             }
         },
         error(newValue, oldValue) {
@@ -70,22 +70,24 @@ const NotesUser = Vue.component('notes-user', {
     methods: {
         addNote: function () {
             console.log('addNote');
+
             const self = this;
             const newNote = {
                 text: this.newNote,
                 createdAt: new Date()
             };
 
-            const boardRef = db.collection("boards").doc(this.board);
-            // const boardRef = null;
-            // try {
-            //     console.log('board', this.board);
-            //     boardRef = db.collection("boards").doc(this.board);
-            // } catch (error) {
-            //     console.log('no board');
-            //     return;
-            // }
-            db.collection("boards").doc(this.board)
+            let boardRef = null;
+            try {
+                console.log('board:', this.board);
+                boardRef = db.collection("boards").doc(this.board);
+            } catch (error) {
+                console.log(`Error intentando ubicar board ${this.board}`, error);
+                Vue.toasted.error(`Error intentando ubicar board ${this.board}: ${error}`);
+                return;
+            }
+
+            boardRef
                 .collection('notes')
                 .add(newNote)
                 .then(docRef => {
@@ -94,17 +96,23 @@ const NotesUser = Vue.component('notes-user', {
                     self.$refs['newNoteInput'].focus();
                 })
                 .catch(error => {
-                    console.log('error agregando nota', error);
+                    console.log('Error agregando nota', error);
                     self.$refs['newNoteInput'].focus();
                     Vue.toasted.error("Error agregando nota: " + error);
                 });
+
         },
         getNotes: function () {
             console.log('getNotes');
             const self = this;
+
+            let boardRef = null;
             try {
+                console.log('board:', this.board);
                 boardRef = db.collection("boards").doc(this.board);
             } catch (error) {
+                console.log(`error intentando ubicar board ${this.board}`, error);
+                Vue.toasted.error(`error intentando ubicar board ${this.board}: ${error}`);
                 return;
             }
             boardRef
@@ -121,15 +129,23 @@ const NotesUser = Vue.component('notes-user', {
                         result.push(item);
                     });
                     self.notes = result;
+                    Vue.toasted.success(`Notas traidas: ${this.notes.length}`);
+                })
+                .catch(error => {
+                    console.log('Error trayendo notas', error);
+                    Vue.toasted.error("Error trayendo notas: " + error);
                 });
         },
         observeNotes: function () {
             console.log('observeNotes');
 
-            const self = this;
+            let boardRef = null;
             try {
+                console.log('board:', this.board);
                 boardRef = db.collection("boards").doc(this.board);
             } catch (error) {
+                console.log(`Error intentando ubicar board ${this.board}`, error);
+                Vue.toasted.error(`Error intentando ubicar board ${this.board}: ${error}`);
                 return;
             }
             boardRef
@@ -149,9 +165,13 @@ const NotesUser = Vue.component('notes-user', {
         },
         deleteNote: function (id) {
             const self = this;
+            let boardRef = null;
             try {
+                console.log('board:', this.board);
                 boardRef = db.collection("boards").doc(this.board);
             } catch (error) {
+                console.log(`Error intentando ubicar board ${this.board}`, error);
+                Vue.toasted.error(`Error intentando ubicar board ${this.board}: ${error}`);
                 return;
             }
             boardRef
@@ -163,8 +183,8 @@ const NotesUser = Vue.component('notes-user', {
                     console.log('nota eliminada:', id);
                 })
                 .catch(function (error) {
-                    console.log('error eliminado nota', error);
-                    Vue.toasted.error("Error eliminado nota: " + error);
+                    console.log(`Error intentando eliminar nota ${id}`, error);
+                    Vue.toasted.error(`Error intentando eliminar nota ${id}: ${error}`);
                 })
         },
         preventDefault: function () {
