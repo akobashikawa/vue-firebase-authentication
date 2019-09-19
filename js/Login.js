@@ -39,14 +39,9 @@ const Login = Vue.component('login', {
         };
     },
     computed: {
-        ...Vuex.mapState(['user', 'status', 'error'])
+        ...Vuex.mapState(['user', 'error'])
     },
     watch: {
-        status(newValue, oldValue) {
-            if (newValue === 'success') {
-
-            }
-        },
         error(newValue, oldValue) {
             const error = newValue;
             if (error) {
@@ -69,18 +64,16 @@ const Login = Vue.component('login', {
             this.$store.dispatch('googleLogin');
             this.$router.push('/').catch(err => { });
         },
-        passwordLogin: async function () {
+        passwordLogin: function () {
             const email = this.email;
             const password = this.password;
-            try {
-                const resultOK = await this.$store.dispatch('passwordLogin', { email, password });
-                console.log('resultOK', resultOK);
-                if (resultOK) {
+            this.$store.dispatch('passwordLogin', { email, password })
+                .then(result => {
                     this.$router.push('/').catch(err => { });
-                }
-            } catch (error) {
-                console.log('passwordLogin', error);
-            }
+                })
+                .catch(error => {
+                    console.log('passwordLogin', error);
+                });
         },
         customLogin: async function () {
             const email = this.email;
