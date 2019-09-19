@@ -1,7 +1,6 @@
 const store = new Vuex.Store({
     state: {
         user: null,
-        status: null,
         error: null,
     },
     mutations: {
@@ -11,15 +10,8 @@ const store = new Vuex.Store({
         removeUser(state) {
             state.user = null;
         },
-        setStatus(state, status) {
-            state.status = status;
-            if (status == 'success') {
-                state.error = null;
-            }
-        },
         setError(state, error) {
             state.error = error;
-            state.status = 'error';
         },
     },
     actions: {
@@ -43,7 +35,6 @@ const store = new Vuex.Store({
                         _user.displayName = user.email;
                     }
                     commit('setUser', _user);
-                    commit('setStatus', 'success');
                 } else {
                     commit('removeUser');
                 }
