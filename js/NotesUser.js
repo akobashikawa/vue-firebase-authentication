@@ -36,6 +36,7 @@ const NotesUser = Vue.component('notes-user', {
         </section>
     </div>
     `,
+    props: ['initBoard'],
     data() {
         return {
             newNote: '',
@@ -66,6 +67,9 @@ const NotesUser = Vue.component('notes-user', {
         }
     },
     mounted() {
+        if (this.initBoard) {
+            this.board = this.initBoard;
+        }
     },
     methods: {
         addNote: function () {
