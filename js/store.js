@@ -109,7 +109,7 @@ const store = new Vuex.Store({
             const password = payload.password;
 
             try {
-                const url = 'http://localhost:4000/api/v2/auth/login-firebase';
+                const url = 'http://localhost:4000/login-firebase';
                 const method = 'POST';
                 const data = { email, password };
                 const result = await axios({ url, method, data });
