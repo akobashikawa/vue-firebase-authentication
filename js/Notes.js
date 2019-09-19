@@ -15,7 +15,7 @@ const Notes = Vue.component('notes', {
         };
     },
     computed: {
-        ...Vuex.mapState(['user', 'status', 'error'])
+        ...Vuex.mapState(['user', 'error'])
     },
     watch: {
         error(newValue, oldValue) {

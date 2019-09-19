@@ -45,19 +45,16 @@ const NotesUser = Vue.component('notes-user', {
         };
     },
     computed: {
-        ...Vuex.mapState(['user', 'error'])
+        ...Vuex.mapState(['user', 'error']),
     },
     watch: {
         user() {
             const board = this.initBoard ? this.initBoard : (this.$store.state.user ? this.$store.state.user.uid : '');
-            console.log(board);
-            if (this.board) {
-                this.board = board;
-                this.getNotes();
-            } else {
-                this.board = board;
-                this.observeNotes();
-            }
+            this.board = board;
+        },
+        board() {
+            // this.getNotes();
+            this.observeNotes();
         },
         error(newValue, oldValue) {
             const error = newValue;

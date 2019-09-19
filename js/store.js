@@ -30,11 +30,23 @@ const store = new Vuex.Store({
                         email: user.email,
                         emailVerified: user.emailVerified,
                         photoURL: user.photoURL,
+                        lastLogin: new Date()
                     };
                     if (!_user.displayName) {
                         _user.displayName = user.email;
                     }
                     commit('setUser', _user);
+
+                    // update profile
+                    db.collection("boards")
+                        .doc(_user.uid)
+                        .set(_user)
+                        .then(docRef => {
+                            console.log('profile guardado:', _user.uid);
+                        })
+                        .catch(error => {
+                            console.log('Error guardando profile', error);
+                        });
                 } else {
                     commit('removeUser');
                 }
