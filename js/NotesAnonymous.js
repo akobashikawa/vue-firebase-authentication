@@ -60,12 +60,24 @@ const NotesAnonymous = Vue.component('notes-anonymous', {
     methods: {
         addNote: function () {
             console.log('addNote');
+
             const self = this;
+
             const newNote = {
                 text: this.newNote,
                 createdAt: new Date()
             };
-            const boardRef = db.collection("boards").doc(this.board);
+
+            let boardRef = null;
+            try {
+                console.log('board:', this.board);
+                boardRef = db.collection("boards").doc(this.board);
+            } catch (error) {
+                console.log(`Error intentando ubicar board ${this.board}`, error);
+                Vue.toasted.error(`Error intentando ubicar board ${this.board}: ${error}`);
+                return;
+            }
+
             boardRef
                 .collection('notes')
                 .add(newNote)
@@ -83,13 +95,17 @@ const NotesAnonymous = Vue.component('notes-anonymous', {
         getNotes: function () {
             console.log('getNotes');
 
-            if (!this.board) {
-                Vue.toasted.error('No hay board');
-                return;
-            };
-
             const self = this;
-            const boardRef = db.collection("boards").doc(this.board);
+
+            let boardRef = null;
+            try {
+                console.log('board:', this.board);
+                boardRef = db.collection("boards").doc(this.board);
+            } catch (error) {
+                console.log(`error intentando ubicar board ${this.board}`, error);
+                Vue.toasted.error(`error intentando ubicar board ${this.board}: ${error}`);
+                return;
+            }
             boardRef
                 .collection('notes')
                 .orderBy("createdAt")
@@ -104,16 +120,23 @@ const NotesAnonymous = Vue.component('notes-anonymous', {
                         result.push(item);
                     });
                     self.notes = result;
+                    Vue.toasted.success(`Notas traidas: ${this.notes.length}`);
+                })
+                .catch(error => {
+                    console.log('Error trayendo notas', error);
+                    Vue.toasted.error("Error trayendo notas: " + error);
                 });
         },
         observeNotes: function () {
             console.log('observeNotes');
 
-            const self = this;
-            const boardRef = null;
+            let boardRef = null;
             try {
+                console.log('board:', this.board);
                 boardRef = db.collection("boards").doc(this.board);
             } catch (error) {
+                console.log(`Error intentando ubicar board ${this.board}`, error);
+                Vue.toasted.error(`Error intentando ubicar board ${this.board}: ${error}`);
                 return;
             }
             boardRef
@@ -132,8 +155,19 @@ const NotesAnonymous = Vue.component('notes-anonymous', {
                 });
         },
         deleteNote: function (id) {
+            console.log('deleteNote');
+
             const self = this;
-            const boardRef = db.collection("boards").doc(this.board);
+
+            let boardRef = null;
+            try {
+                console.log('board:', this.board);
+                boardRef = db.collection("boards").doc(this.board);
+            } catch (error) {
+                console.log(`Error intentando ubicar board ${this.board}`, error);
+                Vue.toasted.error(`Error intentando ubicar board ${this.board}: ${error}`);
+                return;
+            }
             boardRef
                 .collection('notes')
                 .doc(id)
@@ -141,10 +175,11 @@ const NotesAnonymous = Vue.component('notes-anonymous', {
                 .then(function () {
                     self.getNotes();
                     console.log('nota eliminada:', id);
+                    Vue.toasted.success(`Nota eliminada: ${id}`);
                 })
                 .catch(function (error) {
-                    console.log('error eliminado nota', error);
-                    Vue.toasted.error("Error eliminado nota: " + error);
+                    console.log(`Error intentando eliminar nota ${id}`, error);
+                    Vue.toasted.error(`Error intentando eliminar nota ${id}: ${error}`);
                 })
         },
         preventDefault: function () {

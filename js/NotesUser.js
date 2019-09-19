@@ -72,6 +72,7 @@ const NotesUser = Vue.component('notes-user', {
             console.log('addNote');
 
             const self = this;
+
             const newNote = {
                 text: this.newNote,
                 createdAt: new Date()
@@ -139,6 +140,8 @@ const NotesUser = Vue.component('notes-user', {
         observeNotes: function () {
             console.log('observeNotes');
 
+            const self = this;
+
             let boardRef = null;
             try {
                 console.log('board:', this.board);
@@ -164,7 +167,10 @@ const NotesUser = Vue.component('notes-user', {
                 });
         },
         deleteNote: function (id) {
+            console.log('deleteNote');
+
             const self = this;
+
             let boardRef = null;
             try {
                 console.log('board:', this.board);
@@ -181,6 +187,7 @@ const NotesUser = Vue.component('notes-user', {
                 .then(function () {
                     self.getNotes();
                     console.log('nota eliminada:', id);
+                    Vue.toasted.success(`Nota eliminada: ${id}`);
                 })
                 .catch(function (error) {
                     console.log(`Error intentando eliminar nota ${id}`, error);
