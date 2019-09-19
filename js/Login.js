@@ -11,7 +11,7 @@ const Login = Vue.component('login', {
                 <button class="btn btn-sm btn-outline-primary" @click="googleLogin">Google</button>
             </li>
             <li class="mb-2">
-                <div class="input-group col-sm-4 p-0">
+                <div class="input-group col-sm-12 p-0">
                     <input type="text" class="form-control" v-model="email" placeholder="Email">
                     <input type="password" class="form-control" v-model="password" placeholder="Password">
                     <div class="input-group-append">
@@ -20,7 +20,7 @@ const Login = Vue.component('login', {
                 </div>
             </li>
             <li class="mb-2">
-                <div class="input-group col-sm-4 p-0">
+                <div class="input-group col-sm-12 p-0">
                     <input type="text" class="form-control" v-model="email" placeholder="Email">
                     <input type="password" class="form-control" v-model="password" placeholder="Password">
                     <div class="input-group-append">
@@ -56,8 +56,14 @@ const Login = Vue.component('login', {
     },
     methods: {
         anonymousLogin: function () {
-            this.$store.dispatch('anonymousLogin');
-            this.$router.push('/').catch(err => { });
+            this.$store.dispatch('anonymousLogin')
+                .then(response => {
+                    console.log(response);
+                    this.$router.push('/').catch(err => { });
+                })
+                .catch(error => {
+                    console.log('anonymousLogin', error);
+                });
         },
         googleLogin: function () {
             this.$store.dispatch('googleLogin');
@@ -72,8 +78,8 @@ const Login = Vue.component('login', {
                 if (resultOK) {
                     this.$router.push('/').catch(err => { });
                 }
-            } catch (resultOK) {
-                console.log('resultOK', resultOK);
+            } catch (error) {
+                console.log('passwordLogin', error);
             }
         },
         customLogin: async function () {
