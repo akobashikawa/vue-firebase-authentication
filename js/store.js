@@ -43,6 +43,7 @@ const store = new Vuex.Store({
         anonymousLogin({ commit }) {
             firebase.auth().signInAnonymously().catch(function (error) {
                 commit('setError', error);
+                return Promise.reject(false);
             });
         },
         googleLogin({ commit }) {
